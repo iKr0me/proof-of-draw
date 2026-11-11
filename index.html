@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#172d35">
+  <title>Proof of Draw · Creator giveaway verifier</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #172c35;
+      --quiet: #4c605f;
+      --paper: #f5f5ec;
+      --line: #ced4c9;
+      --lime: #c5f389;
+      --mono: "IBM Plex Mono", "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      --sans: Inter, "Helvetica Neue", Arial, sans-serif;
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    [hidden] { display: none !important; }
+    body { margin: 0; background: var(--paper); color: var(--ink); font: 16px/1.48 var(--sans); }
+    a { color: inherit; text-underline-offset: .22em; }
+    :focus-visible { outline: 3px solid #337a7f; outline-offset: 4px; }
+    .wrap { max-width: 1232px; margin: 0 auto; padding-inline: clamp(18px, 4vw, 52px); }
+    .site-head { display: flex; align-items: center; justify-content: space-between; min-height: 64px; border-bottom: 1px solid var(--line); gap: 12px; }
+    .wordmark { display: inline-flex; align-items: center; gap: 11px; font-size: 22px; font-weight: 750; letter-spacing: -.065em; }
+    .mark { width: 27px; height: 27px; padding: 4px; display: grid; gap: 2px; grid-template-columns: 1fr 1fr; background: var(--ink); border-radius: 5px; transform: rotate(-4deg); }
+    .mark i { border-radius: 1px; background: var(--lime); }
+    .mark i:nth-child(2) { opacity: .3; }
+    .archive-link { color: var(--quiet); font: 600 14px/1.4 var(--sans); }
+    .hero { padding: 24px 0 22px; }
+    .hero h1 { margin: 4px 0; font-size: clamp(36px, 4vw, 54px); line-height: 1.04; letter-spacing: -.058em; }
+    .hero p { margin: 8px 0 0; color: var(--quiet); font-size: clamp(16px, 1.45vw, 19px); }
+    .eyebrow { font: 700 11px/1.35 var(--mono); letter-spacing: .12em; text-transform: uppercase; }
+    .hero .eyebrow { display: inline-flex; align-items: center; gap: 7px; color: #37594b; }
+    .hero .eyebrow::before { content: ""; display: block; width: 8px; height: 8px; background: #60834c; border-radius: 50%; }
+    .panels { display: grid; grid-template-columns: minmax(0, 1.08fr) minmax(0, 1fr); gap: 16px; }
+    .panel { border-radius: 15px; padding: 24px 26px; min-width: 0; }
+    h2 { margin: 0; font-size: 25px; line-height: 1.18; letter-spacing: -.045em; }
+    .record { background: var(--ink); color: white; }
+    .record .top, .result-title { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .round { color: var(--lime); font: 600 13px var(--mono); white-space: nowrap; }
+    .source { color: #b6c9c7; font-size: 13px; margin-top: 5px; }
+    .workings { margin: 22px 0 17px; }
+    .record-label { color: #c9d6d0; font-size: 14px; font-weight: 600; }
+    .byte { display: flex; gap: 3px; margin: 8px 0 5px; }
+    .bit { width: clamp(22px, 3vw, 36px); height: 40px; display: grid; place-items: center; border: 1px solid #496168; border-radius: 5px; font: 600 22px var(--mono); color: #c2d1d2; }
+    .bit.selected { background: var(--lime); color: var(--ink); border-color: var(--lime); }
+    .mapping { color: #c9d6d0; font-size: 14px; }
+    .mapping strong { color: var(--lime); font-family: var(--mono); }
+    .roster { padding-top: 13px; border-top: 1px solid #40565c; }
+    .roster-list { list-style: none; display: flex; flex-wrap: wrap; gap: 5px; margin: 9px 0 0; padding: 0; }
+    .roster-list li { min-width: 35px; padding: 4px 5px; text-align: center; border: 1px solid #4c6268; border-radius: 4px; font: 500 13px/1.4 var(--mono); }
+    .roster-list li.winner { color: var(--ink); border-color: var(--lime); background: var(--lime); font-weight: bold; }
+    .check { background: #fff; border: 1px solid var(--line); }
+    .check label { display: block; font-size: 14px; font-weight: 650; margin: 17px 0 6px; }
+    .controls { display: flex; gap: 8px; }
+    button, select { font: 650 16px/1.4 var(--sans); min-height: 43px; border-radius: 7px; }
+    select { min-width: 108px; flex: 1; color: var(--ink); background: white; border: 1px solid #a1b1a9; padding: 7px 10px; }
+    button { padding: 8px 17px; cursor: pointer; background: var(--ink); border: 1px solid var(--ink); color: white; }
+    button:hover { background: #304e54; }
+    .verdict { margin-top: 16px; background: #f1f3ef; border: 1px solid #d6ded8; border-left: 4px solid #83978b; border-radius: 9px; padding: 13px 15px; }
+    .verdict[data-state="pass"] { background: #ebf7d8; border-color: #b2cf91; border-left-color: #47752e; color: #24482e; }
+    .verdict[data-state="fail"] { background: #fcebe3; border-color: #e6b8a6; border-left-color: #ac4f32; color: #77351e; }
+    .result-title { justify-content: flex-start; gap: 8px; margin: 0; font: 700 clamp(21px, 2vw, 28px)/1.15 var(--sans); letter-spacing: -.045em; }
+    .result-icon { font: 700 17px/1 var(--sans); border: 1.5px solid currentColor; border-radius: 50%; width: 23px; height: 23px; display: inline-grid; place-items: center; }
+    .verdict p { margin: 6px 0 0; font-size: 15px; line-height: 1.4; }
+    .rule { margin: 13px 0 0; color: var(--quiet); font-size: 13px; }
+    .notice { display: grid; grid-template-columns: minmax(132px,.45fr) 2fr; gap: 24px; align-items: start; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); margin-top: 20px; padding: 14px 0; }
+    .notice h2 { font-size: 18px; letter-spacing: -.035em; line-height: 1.4; }
+    .notice p { margin: 0; color: var(--quiet); font-size: 14px; }
+    details { padding: 11px 0 28px; color: var(--quiet); font-size: 13px; }
+    summary { font-weight: 650; cursor: pointer; width: fit-content; }
+    details p { max-width: 85ch; }
+    code { font-family: var(--mono); overflow-wrap: anywhere; }
+    @media (min-width: 1450px) { .hero { padding-block: 38px; } .panel { padding: 30px; } }
+    @media (max-width: 800px) { .wrap { padding-inline: 20px; } .panel { padding: 18px; } .panels { gap: 10px; } .round { font-size: 11px; } .controls { flex-wrap: wrap; } }
+    @media (max-width: 690px) { .panels, .notice { grid-template-columns: 1fr; } .hero { padding: 18px 0; } .panels { gap: 12px; } .panel { padding: 20px; } .notice { gap: 3px; margin-top: 17px; } .archive-link { font-size: 12px; } .workings { margin-block: 14px; } }
+    @media (max-width: 350px) { .wrap { padding-inline: 12px; } .panel { padding: 15px; } .wordmark { font-size: 19px; } }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="site-head">
+      <div class="wordmark"><span aria-hidden="true" class="mark"><i></i><i></i><i></i><i></i></span>Proof of Draw</div>
+      <a class="archive-link" href="https://random.colorado.edu/api/curbyq/round/28297" target="_blank" rel="noreferrer">CU Boulder archive ↗</a>
+    </header>
+    <main>
+      <section class="hero" aria-labelledby="page-title">
+        <span class="eyebrow">Archived replay</span>
+        <h1 id="page-title">The $1 million giveaway</h1>
+        <p>Eight fictional tickets enter a creator giveaway. Check the announced winner against a public quantum beacon.</p>
+      </section>
+      <div class="panels">
+        <section class="panel record" aria-labelledby="record-title">
+          <div class="top"><h2 id="record-title">Public draw receipt</h2><span class="round">ROUND <span id="round-number"></span></span></div>
+          <div class="source">CU Boulder · CURBy-Q · <time id="record-time"></time></div>
+          <div class="workings">
+            <div class="record-label">First byte of the public value</div>
+            <div class="byte" id="first-byte"></div>
+            <div class="mapping" id="draw-mapping"></div>
+          </div>
+          <div class="roster">
+            <div class="record-label">Fictional tickets in draw order</div>
+            <ol class="roster-list" id="ordered-tickets"></ol>
+          </div>
+        </section>
+        <section class="panel check" aria-labelledby="check-title">
+          <h2 id="check-title">Check the announcement</h2>
+          <form id="announcement-form">
+            <label for="announced-ticket">Announced ticket</label>
+            <div class="controls"><select id="announced-ticket" name="ticket"></select><button id="verify-draw" type="submit">Verify winner</button></div>
+          </form>
+          <div class="verdict" id="receipt-result" role="status" aria-live="polite" aria-atomic="true" data-state="ready">
+            <h3 class="result-title"><span class="result-icon" id="verdict-icon" aria-hidden="true">?</span><span id="verdict-title">Ready to check</span></h3>
+            <p id="verdict-body">Choose the ticket the organizer announced and select Verify winner.</p>
+          </div>
+          <p class="rule">Try ticket #04, then #07. The receipt stays fixed.</p>
+        </section>
+      </div>
+      <aside class="notice">
+        <h2>Before a live draw</h2>
+        <p>Publish the ordered ticket list, selection rule, a specific future round and a fallback for a missing round. This teaching replay pairs a fictional list with an already published value.</p>
+      </aside>
+      <details><summary>Inspect the archived value and rule</summary>
+        <p>Use the first three bits of the 512-bit value as an index from 0 to 7. Index 0 points to the first ticket. Each possible three-bit value points to exactly one of the eight tickets.</p>
+        <p>Published field <code>payload.randomness["/"].bytes</code> (unpadded Base64)</p>
+        <p><code id="base64-value"></code></p>
+        <p>This offline verifier replays the selection from a copy of the published value. Source authentication, the beacon’s full certificate and the eligibility of a live list require separate checks. <a href="https://random.colorado.edu/api/curbyq/round/28297" target="_blank" rel="noreferrer">View the original round record ↗</a></p>
+      </details>
+      <noscript>Enable JavaScript to calculate the ticket and check an announcement.</noscript>
+    </main>
+  </div>
+  <script>
+    "use strict";
+    const record = {
+      round: 28297,
+      timestamp: "2025-08-22T19:42:38.156Z",
+      base64: "YcMHstzt6o9c6aPGjjh/eN8SbUpqRZJKqGRXxJiFlmiRulB+DJtPkGnsu0qehfklw8HbuEt0eJCekWw5Ed5CqQ"
+    };
+    const tickets = [1, 2, 3, 4, 5, 6, 7, 8];
+    const ticketLabel = ticket => "#" + String(ticket).padStart(2, "0");
+    const value = atob(record.base64);
+    if (value.length !== 64 || tickets.length !== 8 || new Set(tickets).size !== 8) {
+      throw new Error("Receipt requires a 512-bit value and eight unique tickets.");
+    }
+    const bits = value.charCodeAt(0).toString(2).padStart(8, "0");
+    const leadingBits = bits.slice(0, 3);
+    const index = parseInt(leadingBits, 2);
+    const winner = tickets[index];
+    const byId = id => document.getElementById(id);
+    byId("round-number").textContent = record.round;
+    const time = byId("record-time");
+    time.dateTime = record.timestamp;
+    time.textContent = new Intl.DateTimeFormat("en-GB", {
+      timeZone: "UTC", day: "2-digit", month: "short", year: "numeric",
+      hour: "2-digit", minute: "2-digit", hourCycle: "h23"
+    }).format(new Date(record.timestamp)) + " UTC";
+    byId("base64-value").textContent = record.base64;
+    const firstByte = byId("first-byte");
+    firstByte.setAttribute("aria-label", "First byte " + bits + ". First three bits " + leadingBits + ".");
+    for (const [position, bit] of Array.from(bits).entries()) {
+      const chip = document.createElement("span");
+      chip.className = position < 3 ? "bit selected" : "bit";
+      chip.setAttribute("aria-hidden", "true");
+      chip.textContent = bit;
+      firstByte.append(chip);
+    }
+    const mapping = byId("draw-mapping");
+    const decoded = document.createElement("strong");
+    decoded.textContent = leadingBits;
+    mapping.append(decoded, " in binary = index " + index + " → ticket " + ticketLabel(winner));
+    const select = byId("announced-ticket");
+    for (const ticket of tickets) {
+      const item = document.createElement("li");
+      item.textContent = ticketLabel(ticket);
+      if (ticket === winner) { item.className = "winner"; item.setAttribute("aria-label", "Selected ticket " + ticketLabel(ticket)); }
+      byId("ordered-tickets").append(item);
+      select.add(new Option("Ticket " + ticketLabel(ticket), String(ticket)));
+    }
+    select.value = "4";
+    function showResult(state, icon, title, body) {
+      byId("receipt-result").dataset.state = state;
+      byId("verdict-icon").textContent = icon;
+      byId("verdict-title").textContent = title;
+      byId("verdict-body").textContent = body;
+    }
+    select.addEventListener("change", () => {
+      showResult("ready", "?", "Ready to check", "Verify the new announcement against the same receipt.");
+    });
+    byId("announcement-form").addEventListener("submit", event => {
+      event.preventDefault();
+      const announced = Number(select.value);
+      const published = ticketLabel(winner);
+      if (announced === winner) {
+        showResult("pass", "✓", "Match confirmed", "Announced " + ticketLabel(announced) + " matches the independently calculated ticket " + published + ".");
+      } else {
+        showResult("fail", "×", "Ticket mismatch", "Announced " + ticketLabel(announced) + ". The public draw selects " + published + ".");
+      }
+    });
+  </script>
+</body>
+</html>

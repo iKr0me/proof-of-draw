@@ -2,6 +2,8 @@
 
 A creator announces the winner of a fictional $1 million subscriber giveaway. Can any of the eight ticket holders check the announcement? The verifier replays a fixed ticket list, a public selection rule and an archived randomness pulse.
 
+[Try the live verifier](https://ikr0me.github.io/proof-of-draw/) · [Watch the 1 min 42 sec demo](https://ikr0me.github.io/proof-of-draw/demo.mp4)
+
 ## Try the verifier
 
 Download [index.html](index.html) and open it in a browser. Select **#4** and click **Verify winner**. Repeat with **#7**. CU Boulder’s archived round 28297 starts with the byte `01100001`. The first three bits, `011`, select position 3 in a list counted from zero, which holds ticket **#4**. The checker accepts #4 and rejects #7 against the same receipt. [Original beacon record](https://random.colorado.edu/api/curbyq/round/28297)
@@ -24,4 +26,4 @@ The best of all 16 classical plans wins **75%**. The seeded, ideal Qiskit simula
 
 A classical public beacon could also support replay. A real organizer would need to publish the eligibility policy, ordered list, selection rule, exact future round and fallback policy before the draw. This retrospective example checks the announced winner against the supplied inputs. Audience eligibility, advance publication and prize delivery require separate evidence. The rule handles exactly eight distinct tickets. The source of the archived pulse is CU Boulder. The seeded Qiskit run took place on a classical computer and provides an illustration of Bell correlations. Independent verification of the original physical experiment and its certification falls outside this demo. [NIST guidance on public draws](https://csrc.nist.gov/projects/interoperable-randomness-beacons/apps) · [CU Boulder beacon](https://random.colorado.edu/)
 
-The CHSH strategy follows IBM Quantum Learning. The project adds the giveaway verifier, archived receipt, exhaustive ticket checks and a simulated error experiment. OpenAI Codex assisted with implementation, documentation and verification. [IBM circuit example](https://quantum.cloud.ibm.com/learning/en/courses/basics-of-quantum-information/entanglement-in-action/qiskit-implementation)
+The CHSH strategy follows IBM Quantum Learning. The project adds the giveaway verifier, archived receipt, exhaustive ticket checks and a simulated error experiment. OpenAI Codex assisted with implementation, documentation, video production and verification. The narration uses the ElevenLabs stock voice Ainsley via Higgsfield. [IBM circuit example](https://quantum.cloud.ibm.com/learning/en/courses/basics-of-quantum-information/entanglement-in-action/qiskit-implementation)
